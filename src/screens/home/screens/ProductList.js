@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Swiper from "react-native-swiper";
 import {
   StyleSheet,
   Text,
@@ -7,8 +8,8 @@ import {
   FlatList,
   TouchableOpacity,
   SafeAreaView,
-  Button,
   TextInput,
+  Share,
 } from "react-native";
 import favorites from "../../../../assets/favorites.png";
 import search from "../../../../assets/search.png";
@@ -16,7 +17,6 @@ import basket from "../../../../assets/basket.png";
 import promotion from "../../../../assets/promotion.png";
 import colors from "../../../styles/colors";
 import mockItemData from "../mock/mockItemData";
-import CustomButton from "../../../helpers/CustomButton";
 
 const PromoComponent = ({ isNew, image }) => {
   return (
@@ -29,6 +29,42 @@ const PromoComponent = ({ isNew, image }) => {
       />
       {isNew && <Image source={promotion} style={styles.promotionImage} />}
     </View>
+  );
+};
+
+const SwiperComponent = ({ images }) => {
+  const handleShare = async (imageUri) => {
+    try {
+      const result = await Share.share({
+        message: 'Check out this image!',
+        url: imageUri,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          console.log(`Shared with ${result.activityType}`);
+        } else {
+          console.log('Shared successfully');
+        }
+      } else if (result.action === Share.dismissedAction) {
+        console.log('Share dismissed');
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  return (
+    <Swiper showsPagination={true}>
+      {images.map((image, index) => (
+        <TouchableOpacity
+          key={index}
+          onPress={() => handleShare(image)}
+          style={styles.swiperImageContainer}
+        >
+          <Image source={{ uri: image }} style={styles.swiperImage} />
+        </TouchableOpacity>
+      ))}
+    </Swiper>
   );
 };
 
@@ -87,6 +123,14 @@ export default function ProductList() {
     setFilteredData(filtered);
   };
 
+  const swiperImages = [
+    "/Users/React-native/IDEA/samProject/assets/swiper_1.png",
+    "/Users/React-native/IDEA/samProject/assets/swiper_2.png",
+    "/Users/React-native/IDEA/samProject/assets/swiper_3.png",
+    "/Users/React-native/IDEA/samProject/assets/swiper_4.png",
+    "/Users/React-native/IDEA/samProject/assets/swiper_5.png",
+  ];
+
   return (
     <SafeAreaView>
       <View style={styles.headerContainer}>
@@ -120,8 +164,8 @@ export default function ProductList() {
             activeOpacity={1}
             onPress={toggleModal}
           />
-          <View style={styles.modalContent}>
-            <Button style = {{fontSize: 16}}title="Close Modal" onPress={toggleModal} />
+          <View style={styles.swiperContainer}>
+            <SwiperComponent images={swiperImages} />
           </View>
         </View>
       )}
@@ -239,7 +283,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
     alignItems: "center",
     zIndex: 1,
   },
@@ -251,5 +295,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.backgroundColor,
     padding: 153,
     borderRadius: 10,
+  },
+  swiperContainer: {
+    height: 250,
+  },
+  swiperImage: {
+    flex: 1,
+  },
+  swiperImageContainer: {
+    flex: 1,
+    resizeMode: 'cover',
   },
 });
