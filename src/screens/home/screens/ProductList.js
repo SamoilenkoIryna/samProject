@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import Swiper from "react-native-swiper";
+import React, { useState, useRef, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,13 +9,15 @@ import {
   SafeAreaView,
   TextInput,
   Share,
-} from "react-native";
-import favorites from "../../../../assets/favorites.png";
-import search from "../../../../assets/search.png";
-import basket from "../../../../assets/basket.png";
-import promotion from "../../../../assets/promotion.png";
-import colors from "../../../styles/colors";
-import mockItemData from "../mock/mockItemData";
+  RefreshControl,
+} from 'react-native';
+import Swiper from 'react-native-swiper';
+import favorites from '../../../../assets/favorites.png';
+import search from '../../../../assets/search.png';
+import basket from '../../../../assets/basket.png';
+import promotion from '../../../../assets/promotion.png';
+import colors from '../../../styles/colors';
+import mockItemData from '../mock/mockItemData';
 
 const PromoComponent = ({ isNew, image }) => {
   return (
@@ -98,8 +99,14 @@ const renderItem = ({ item }) => (
 export default function ProductList() {
   const [isModalVisible, setModalVisible] = useState(false);
   const [isSearchVisible, setSearchVisible] = useState(false);
-  const [filterText, setFilterText] = useState("");
-  const [filteredData, setFilteredData] = useState(mockItemData);
+  const [filterText, setFilterText] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  const flatListRef = useRef(null);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -108,7 +115,7 @@ export default function ProductList() {
 
   const toggleSearch = () => {
     setSearchVisible(!isSearchVisible);
-    setFilterText("");
+    setFilterText('');
   };
 
   const handleFilterChange = (text) => {
@@ -120,15 +127,52 @@ export default function ProductList() {
     const filtered = mockItemData.filter((item) =>
       item.title.toLowerCase().includes(text.toLowerCase())
     );
-    setFilteredData(filtered);
+    setFilteredData(filtered.slice(0, pageNumber * 10));
   };
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    setPageNumber(1);
+    setLoadingMore(false);
+    const newData = mockItemData.slice(0, 10);
+    setFilteredData(newData);
+    setRefreshing(false);
+  };
+
+  const onEndReached = () => {
+    if (pageNumber * 10 < mockItemData.length && !loadingMore) {
+      setLoadingMore(true);
+      setPageNumber(pageNumber + 1);
+      setTimeout(() => {
+        const newData = mockItemData.slice(0, pageNumber * 10 + 5);
+        setFilteredData(newData);
+        setLoadingMore(false);
+      }, 1000);
+    } else if (pageNumber * 10 >= mockItemData.length && !loadingMore) {
+      setLoadingMore(true);
+      setTimeout(() => {
+        const remainingData = mockItemData.slice(0, pageNumber * 10 + 5);
+        setFilteredData(remainingData);
+        setLoadingMore(false);
+      }, 1000);
+    }
+  };
+
+  const onIndexChanged = (index) => {
+    setActiveIndex(index);
+  };
+
+  useEffect(() => {
+    const newData = mockItemData.slice(0, pageNumber * 10);
+    setFilteredData(newData);
+  }, []);
+
   const swiperImages = [
-    "/Users/React-native/IDEA/samProject/assets/swiper_1.png",
-    "/Users/React-native/IDEA/samProject/assets/swiper_2.png",
-    "/Users/React-native/IDEA/samProject/assets/swiper_3.png",
-    "/Users/React-native/IDEA/samProject/assets/swiper_4.png",
-    "/Users/React-native/IDEA/samProject/assets/swiper_5.png",
+    '/Users/React-native/IDEA/samProject/assets/swiper_1.png',
+    '/Users/React-native/IDEA/samProject/assets/swiper_2.png',
+    '/Users/React-native/IDEA/samProject/assets/swiper_3.png',
+    '/Users/React-native/IDEA/samProject/assets/swiper_4.png',
+    '/Users/React-native/IDEA/samProject/assets/swiper_5.png',
   ];
 
   return (
@@ -152,10 +196,20 @@ export default function ProductList() {
         </View>
       </View>
       <FlatList
+        ref={flatListRef}
         data={filteredData}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         style={styles.flatList}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={0.1}
+        onMomentumScrollEnd={(event) => {
+          const index = Math.round(
+            event.nativeEvent.contentOffset.x / event.nativeEvent.layoutMeasurement.width
+          );
+          onIndexChanged(index);
+        }}
       />
       {isModalVisible && (
         <View style={styles.modalContainer}>
@@ -164,7 +218,7 @@ export default function ProductList() {
             activeOpacity={1}
             onPress={toggleModal}
           />
-          <View style={styles.swiperContainer}>
+         <View style={styles.swiperContainer}>
             <SwiperComponent images={swiperImages} />
           </View>
         </View>
