@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,16 +8,15 @@ import {
   TouchableOpacity,
   SafeAreaView,
   TextInput,
-  Share,
   RefreshControl,
-} from 'react-native';
-import Swiper from 'react-native-swiper';
-import favorites from '../../../../assets/favorites.png';
-import search from '../../../../assets/search.png';
-import basket from '../../../../assets/basket.png';
-import promotion from '../../../../assets/promotion.png';
-import colors from '../../../styles/colors';
-import mockItemData from '../mock/mockItemData';
+} from "react-native";
+import favorites from "../../../../assets/favorites.png";
+import search from "../../../../assets/search.png";
+import basket from "../../../../assets/basket.png";
+import promotion from "../../../../assets/promotion.png";
+import colors from "../../../styles/colors";
+import mockItemData from "../mock/mockItemData";
+import { useNavigation } from "@react-navigation/native";
 
 const PromoComponent = ({ isNew, image }) => {
   return (
@@ -33,73 +32,11 @@ const PromoComponent = ({ isNew, image }) => {
   );
 };
 
-const SwiperComponent = ({ images }) => {
-  const handleShare = async (imageUri) => {
-    try {
-      const result = await Share.share({
-        message: 'Check out this image!',
-        url: imageUri,
-      });
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          console.log(`Shared with ${result.activityType}`);
-        } else {
-          console.log('Shared successfully');
-        }
-      } else if (result.action === Share.dismissedAction) {
-        console.log('Share dismissed');
-      }
-    } catch (error) {
-      console.error(error.message);
-    }
-  };
+const ProductList = () => {
+  const navigation = useNavigation();
 
-  return (
-    <Swiper showsPagination={true}>
-      {images.map((image, index) => (
-        <TouchableOpacity
-          key={index}
-          onPress={() => handleShare(image)}
-          style={styles.swiperImageContainer}
-        >
-          <Image source={{ uri: image }} style={styles.swiperImage} />
-        </TouchableOpacity>
-      ))}
-    </Swiper>
-  );
-};
-
-const renderItem = ({ item }) => (
-  <View style={styles.productCard} key={item.id}>
-    <View>
-      <PromoComponent isNew={item.isNew} image={item.image} />
-    </View>
-    <View style={styles.mainTextContainer}>
-      <View style={styles.textContainer}>
-        <Text style={styles.textTitle}>{item.title}</Text>
-        <Image source={favorites} style={styles.favoriteImage} />
-      </View>
-      <View style={styles.textContainer}>
-        <Text style={styles.textNewPrice}>{item.textNewPrice}</Text>
-        <Text style={styles.textOldPrice}>{item.textOldPrice}</Text>
-      </View>
-      <View style={styles.textContainer}>
-        <Text style={styles.textLong} numberOfLines={1}>
-          {item.descriptionTitle}
-        </Text>
-        <View style={styles.position}>
-          <Text style={styles.textTitle}>{item.buyText}</Text>
-          <Image source={basket} style={styles.basketImage} />
-        </View>
-      </View>
-    </View>
-  </View>
-);
-
-export default function ProductList() {
-  const [isModalVisible, setModalVisible] = useState(false);
   const [isSearchVisible, setSearchVisible] = useState(false);
-  const [filterText, setFilterText] = useState('');
+  const [filterText, setFilterText] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -108,14 +45,49 @@ export default function ProductList() {
 
   const flatListRef = useRef(null);
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-    setSearchVisible(false);
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.productCard}
+      key={item.id}
+      onPress={() => {
+        console.log("Navigating to PizzaScreen");
+        navigation.navigate("PizzaScreen", { productId: item.id });
+      }}
+    >
+      <View>
+        <PromoComponent isNew={item.isNew} image={item.image} />
+      </View>
+      <View style={styles.mainTextContainer}>
+        <View style={styles.textContainer}>
+          <Text style={styles.textTitle}>{item.title}</Text>
+          <Image source={favorites} style={styles.favoriteImage} />
+        </View>
+        <View style={styles.textContainer}>
+          <Text style={styles.textNewPrice}>{item.textNewPrice}</Text>
+          <Text style={styles.textOldPrice}>{item.textOldPrice}</Text>
+        </View>
+        <View style={styles.textContainer}>
+          <Text style={styles.textLong} numberOfLines={1}>
+            {item.descriptionTitle}
+          </Text>
+          <View style={styles.position}>
+            <Text style={styles.textTitle}>{item.buyText}</Text>
+            <Image source={basket} style={styles.basketImage} />
+          </View>
+        </View>
+      </View>
+      <View></View>
+    </TouchableOpacity>
+  );
+
+  const navigateToSwiperScreen = () => {
+    console.log("Navigating to SwiperScreen");
+    navigation.navigate("SwiperScreen");
   };
 
   const toggleSearch = () => {
     setSearchVisible(!isSearchVisible);
-    setFilterText('');
+    setFilterText("");
   };
 
   const handleFilterChange = (text) => {
@@ -167,14 +139,6 @@ export default function ProductList() {
     setFilteredData(newData);
   }, []);
 
-  const swiperImages = [
-    '/Users/React-native/IDEA/samProject/assets/swiper_1.png',
-    '/Users/React-native/IDEA/samProject/assets/swiper_2.png',
-    '/Users/React-native/IDEA/samProject/assets/swiper_3.png',
-    '/Users/React-native/IDEA/samProject/assets/swiper_4.png',
-    '/Users/React-native/IDEA/samProject/assets/swiper_5.png',
-  ];
-
   return (
     <SafeAreaView>
       <View style={styles.headerContainer}>
@@ -187,7 +151,7 @@ export default function ProductList() {
           />
         )}
         <View style={styles.rightPosition}>
-          <TouchableOpacity onPress={toggleModal}>
+          <TouchableOpacity onPress={navigateToSwiperScreen}>
             <Image source={favorites} style={styles.favoriteButton} />
           </TouchableOpacity>
           <TouchableOpacity onPress={toggleSearch}>
@@ -201,37 +165,28 @@ export default function ProductList() {
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         style={styles.flatList}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         onEndReached={onEndReached}
         onEndReachedThreshold={0.1}
         onMomentumScrollEnd={(event) => {
           const index = Math.round(
-            event.nativeEvent.contentOffset.x / event.nativeEvent.layoutMeasurement.width
+            event.nativeEvent.contentOffset.x /
+              event.nativeEvent.layoutMeasurement.width
           );
           onIndexChanged(index);
         }}
       />
-      {isModalVisible && (
-        <View style={styles.modalContainer}>
-          <TouchableOpacity
-            style={styles.modalOverlay}
-            activeOpacity={1}
-            onPress={toggleModal}
-          />
-         <View style={styles.swiperContainer}>
-            <SwiperComponent images={swiperImages} />
-          </View>
-        </View>
-      )}
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row",
     position: "absolute",
-    top: 30,
+    top: 20,
     left: 10,
   },
   input: {
@@ -350,14 +305,6 @@ const styles = StyleSheet.create({
     padding: 153,
     borderRadius: 10,
   },
-  swiperContainer: {
-    height: 250,
-  },
-  swiperImage: {
-    flex: 1,
-  },
-  swiperImageContainer: {
-    flex: 1,
-    resizeMode: 'cover',
-  },
 });
+
+export default ProductList;
