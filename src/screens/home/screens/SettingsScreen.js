@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 
-export default function HomeScreen() {
+export default function SettingsScreen() {
   return (
     <View style={styles.container}>
         <View style={{
@@ -9,9 +9,9 @@ export default function HomeScreen() {
             height: '50%',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: 'yellow',
+            backgroundColor: 'purple',
         }}>
-        <Text>HomeScreen</Text>
+        <Text>Settings</Text>
         </View>
       <StatusBar style="auto" />
     </View>
