@@ -9,6 +9,7 @@ import SettingsScreen from './src/screens/home/screens/SettingsScreen';
 import AppNavigator from './src/screens/home/screens/AppNavigator';
 import PizzaScreen from './src/screens/home/screens/PizzaScreen';
 import SwiperScreen from './src/screens/home/screens/SwiperScreen';
+import BasketScreen from './src/screens/home/screens/BasketScreen';
 
 
 
@@ -21,6 +22,7 @@ export default function App() {
         <Stack.Screen name="ProductList" component={ProductList} options={{ title: 'Products List' }} />
         <Stack.Screen name="PizzaScreen" component={PizzaScreen} options={{ title: 'Pizza Screen' }} />
         <Stack.Screen name="SwiperScreen" component={SwiperScreen} options={{ presentation: 'modal' }} />
+        <Stack.Screen name="BasketScreen" component={BasketScreen} options={{ title: 'Basket' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

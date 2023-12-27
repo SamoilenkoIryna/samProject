@@ -1,41 +1,55 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, Button } from "react-native";
+import { observer } from "mobx-react";
+import basketStore from "../components/basketStore";
 const swiperImage = require("../../../../assets/swiper_4.png");
+import mockItemData from "../mock/mockItemData";
 
-const PizzaScreen = ({ route }) => {
+const PizzaScreen = ({ route, navigation }) => {
   const { productId } = route.params;
+
+  const getPizzaById = (productId) => {
+    return mockItemData.find((pizza) => pizza.id === productId);
+  };
+
+  const pizza = getPizzaById(productId);
+
+  const handleAddToBasket = () => {
+    basketStore.addToBasket(pizza);
+  };
+
+  const handleNavigateToBasket = () => {
+    navigation.navigate('BasketScreen', { pizza });
+  };
 
   return (
     <View style={styles.container}>
-       <Text>{`Product ID: ${productId}`}</Text>
+      <Text style={styles.title}>{`Product ID: ${productId}`}</Text>
       <Image source={swiperImage} style={styles.pizzaImage} />
-      <Text style={styles.title}>
-        Margherita Pizza 
-      </Text>
+      <Text style={styles.title}>Margherita Pizza</Text>
       <Text style={styles.description1}>
-        The Margherita pizza is a classic Italian pizza that
-        embodies simplicity and deliciousness. Named after Queen Margherita of
-        Savoy, this pizza is a true representation of the colors of the Italian
-        flag: red, white, and green. 
+        The Margherita pizza is a classic Italian pizza that embodies simplicity
+        and deliciousness. Named after Queen Margherita of Savoy, this pizza is
+        a true representation of the colors of the Italian flag: red, white, and
+        green.
       </Text>
       <Text style={styles.ingredients}>
-        Ingredients: Pizza Dough: A thin and airy
-        crust made from a simple mixture of flour, water, yeast, salt, and a
-        touch of olive oil. San Marzano Tomatoes: The sauce is crafted from the
-        finest San Marzano tomatoes, known for their sweetness and low acidity.
-        Fresh Mozzarella Cheese: Creamy and milky fresh mozzarella cheese is
-        evenly distributed across the pizza, adding a rich and satisfying
-        texture. Basil Leaves: A sprinkle of fresh basil leaves provides a burst
-        of aromatic flavor and a touch of vibrant green, enhancing the pizza's
-        visual appeal. Extra Virgin Olive Oil: A drizzle of high-quality extra
-        virgin olive oil completes the Margherita pizza, adding a luxurious
-        finish.
+        Ingredients: Pizza Dough: A thin and airy crust made from a simple
+        mixture of flour, water, yeast, salt, and a touch of olive oil. San
+        Marzano Tomatoes: The sauce is crafted from the finest San Marzano
+        tomatoes, known for their sweetness and low acidity. Fresh Mozzarella
+        Cheese: Creamy and milky fresh mozzarella cheese is evenly distributed
+        across the pizza, adding a rich and satisfying texture. Basil Leaves: A
+        sprinkle of fresh basil leaves provides a burst of aromatic flavor and a
+        touch of vibrant green, enhancing the pizza's visual appeal. Extra
+        Virgin Olive Oil: A drizzle of high-quality extra virgin olive oil
+        completes the Margherita pizza, adding a luxurious finish.
       </Text>
       <Text style={styles.description}>
-        Description: The Margherita pizza is a culinary masterpiece that
-        lets the quality of its ingredients shine. The crust, thin and crispy,
-        serves as the perfect canvas for the vibrant red of the tomato sauce,
-        the pure white of the mozzarella, and the lively green of the basil. The
+        Description: The Margherita pizza is a culinary masterpiece that lets
+        the quality of its ingredients shine. The crust, thin and crispy, serves
+        as the perfect canvas for the vibrant red of the tomato sauce, the pure
+        white of the mozzarella, and the lively green of the basil. The
         tomatoes, selected for their natural sweetness, create a luscious base,
         while the fresh mozzarella melts into gooey perfection. Each bite is a
         harmonious blend of flavors — the earthiness of basil, the creaminess of
@@ -43,6 +57,8 @@ const PizzaScreen = ({ route }) => {
         extra virgin olive oil, the Margherita pizza is a timeless classic that
         captures the essence of Italian culinary artistry.
       </Text>
+      <Button title="Add to Basket" onPress={handleAddToBasket} />
+      <Button title="Go to Basket" onPress={handleNavigateToBasket} />
     </View>
   );
 };
@@ -61,25 +77,25 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 10,
-    fontSize: 12,
+    fontSize: 10,
     textAlign: "center",
     fontWeight: "bold",
   },
   description1: {
     marginTop: 10,
-    fontSize: 12,
+    fontSize: 10,
     marginLeft: 10,
   },
   ingredients: {
     marginTop: 10,
-    fontSize: 12,
+    fontSize: 10,
     marginLeft: 10,
   },
   description: {
     marginTop: 10,
-    fontSize: 12,
+    fontSize: 10,
     marginLeft: 10,
   },
 });
 
-export default PizzaScreen;
+export default observer(PizzaScreen);
