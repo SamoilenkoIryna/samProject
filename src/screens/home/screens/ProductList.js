@@ -6,7 +6,6 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
-  SafeAreaView,
   TextInput,
   RefreshControl,
 } from "react-native";
@@ -17,6 +16,7 @@ import promotion from "../../../../assets/promotion.png";
 import colors from "../../../styles/colors";
 import mockItemData from "../mock/mockItemData";
 import { useNavigation } from "@react-navigation/native";
+import Footer from "../../../components/Footer";
 
 const PromoComponent = ({ isNew, image }) => {
   return (
@@ -140,7 +140,7 @@ const ProductList = () => {
   }, []);
 
   return (
-    <SafeAreaView>
+    <View>
       <View style={styles.headerContainer}>
         {isSearchVisible && (
           <TextInput
@@ -157,6 +157,9 @@ const ProductList = () => {
           <TouchableOpacity onPress={toggleSearch}>
             <Image source={search} style={styles.searchButton} />
           </TouchableOpacity>
+        </View>
+        <View>
+        <Footer />
         </View>
       </View>
       <FlatList
@@ -178,7 +181,7 @@ const ProductList = () => {
           onIndexChanged(index);
         }}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -288,6 +291,9 @@ const styles = StyleSheet.create({
   },
   flatList: {
     marginTop: 50,
+    marginVertical: 30,
+    marginLeft: 5,
+    marginRight: 5,
     backgroundColor: colors.backgroundColor,
   },
   modalContainer: {
