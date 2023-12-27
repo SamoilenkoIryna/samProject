@@ -4,6 +4,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { observer } from "mobx-react";
 import basketStore from "../screens/home/components/basketStore";
 import { useNavigation } from "@react-navigation/native";
+import colors from "../styles/colors";
 
 const Footer = () => {
   const navigation = useNavigation();
@@ -22,17 +23,17 @@ const Footer = () => {
       >
         <TouchableOpacity onPress={navigateToBasketScreen}>
           <View style={{ flexDirection: "row" }}>
-            <Icon name="shopping-basket" size={20} color="black" />
+            <Icon name="shopping-basket" size={20} />
             {basketStore.basketCount > 0 && (
               <View
                 style={{
-                  backgroundColor: "red",
+                  backgroundColor: colors.counterColor,
                   borderRadius: 10,
                   marginLeft: 5,
-                  padding: 2,
+                  padding: 4,
                 }}
               >
-                <Text style={{ color: "white", fontSize: 12 }}>
+                <Text style={{ color: colors.backgroundColor, fontSize: 12 }}>
                   {basketStore.basketCount}
                 </Text>
               </View>

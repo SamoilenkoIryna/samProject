@@ -15,9 +15,6 @@ const BasketScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.basketCountText}>
-        Number of items in basket: {basketStore.basketCount}
-      </Text>
       <FlatList
         data={basketStore.orders}
         keyExtractor={(item, index) => index.toString()}
@@ -37,6 +34,9 @@ const BasketScreen = () => {
         ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
        <View style={styles.footer}>
+       <Text style={styles.basketCountText}>
+        Number of items in basket: {basketStore.basketCount}
+      </Text>
         <Text style={styles.totalText}>Total: ${basketStore.calculateTotal() ? basketStore.calculateTotal().toFixed(2) : 0}</Text>
         <Button title="Submit Basket" onPress={handleClearBasket} />
       </View>
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   },
   basketCountText: {
     position: "absolute",
-    top: 300,
+    top: 1,
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   totalText: {
-    marginTop: 10,
+    marginTop:17,
     fontSize: 18,
     fontWeight: "bold",
   },
