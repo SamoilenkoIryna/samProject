@@ -9,6 +9,10 @@ import {
   TextInput,
   RefreshControl,
 } from "react-native";
+import Animated, {
+  BounceIn,
+  BounceOut,
+} from "react-native-reanimated";
 import favorites from "../../../../assets/favorites.png";
 import search from "../../../../assets/search.png";
 import basket from "../../../../assets/basket.png";
@@ -143,12 +147,14 @@ const ProductList = () => {
     <View>
       <View style={styles.headerContainer}>
         {isSearchVisible && (
-          <TextInput
-            style={styles.input}
-            placeholder="Search..."
-            onChangeText={handleFilterChange}
-            value={filterText}
-          />
+          <Animated.View entering={BounceIn} exiting={BounceOut}>
+            <TextInput
+              style={styles.input}
+              placeholder="Search..."
+              onChangeText={handleFilterChange}
+              value={filterText}
+            />
+          </Animated.View>
         )}
         <View style={styles.rightPosition}>
           <TouchableOpacity onPress={navigateToSwiperScreen}>
@@ -159,7 +165,7 @@ const ProductList = () => {
           </TouchableOpacity>
         </View>
         <View>
-        <Footer />
+          <Footer />
         </View>
       </View>
       <FlatList
@@ -193,12 +199,12 @@ const styles = StyleSheet.create({
     left: 10,
   },
   input: {
-    width: "80%",
+    width: "300%",
     height: 30,
-    borderWidth: 1,
+    backgroundColor: 'gray',
     borderRadius: 10,
-    borderColor: "black",
     paddingLeft: 10,
+    color: 'black',
   },
   productCard: {
     width: "100%",
