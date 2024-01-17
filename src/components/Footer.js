@@ -1,17 +1,30 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, TouchableOpacity, SafeAreaView } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
+import { Ionicons } from '@expo/vector-icons';
 import { observer } from "mobx-react";
 import basketStore from "../screens/home/components/basketStore";
 import { useNavigation } from "@react-navigation/native";
+import { useFonts, FontAwesome } from '@expo/vector-icons';
+
 import colors from "../styles/colors";
 
 const Footer = () => {
   const navigation = useNavigation();
+
+  useEffect(() => {
+    async function loadFonts() {
+      await useFonts({
+        FontAwesome,
+      });
+    }
+    loadFonts();
+  }, []);
+
   const navigateToBasketScreen = () => {
     console.log("Navigating to BasketScreen");
     navigation.navigate("BasketScreen");
   };
+
   return (
     <SafeAreaView>
       <View
@@ -23,7 +36,7 @@ const Footer = () => {
       >
         <TouchableOpacity onPress={navigateToBasketScreen}>
           <View style={{ flexDirection: "row" }}>
-            <Icon name="shopping-basket" size={20} />
+            <Ionicons name="md-basket" size={20} />
             {basketStore.basketCount > 0 && (
               <View
                 style={{
@@ -34,7 +47,7 @@ const Footer = () => {
                 }}
               >
                 <Text style={{ color: colors.backgroundColor, fontSize: 12 }}>
-                  {basketStore.basketCount}
+                  {`${basketStore.basketCount}`} {/* Wrap the string inside a Text component */}
                 </Text>
               </View>
             )}
